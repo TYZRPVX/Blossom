@@ -18,5 +18,6 @@ public class MainActivity extends AppCompatActivity {
 
         TextView viewById = (TextView) findViewById(R.id.text);
         viewById.setText(Test.test);
+
     }
 }

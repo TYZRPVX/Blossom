@@ -1,1 +1,1 @@
-include ':example', ':blossom'
+include ':example', ':blossom', ':ready', ':testlint_aar'

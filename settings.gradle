@@ -1,1 +1,1 @@
-include ':example', ':blossom', ':ready', ':testlint_aar'
+include ':example', ':blossom', ':ready', ':testlint_aar', ':blossom-compiler', ':blossom-annotations'

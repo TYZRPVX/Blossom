@@ -1,1 +1,1 @@
-include ':blossom-annotations', ':blossom-compiler', ':blossom-example'
+include ':blossom-annotations', ':blossom-compiler', ':blossom-example', ':ready'

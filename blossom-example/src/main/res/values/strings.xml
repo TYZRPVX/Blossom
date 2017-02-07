@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">blossom-example</string>
     <string name="button_name">确定</string>
+    <string name="text_view2">text view2</string>
 </resources>

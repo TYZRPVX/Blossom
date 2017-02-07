@@ -14,14 +14,14 @@ public class Blossom {
         Resources res = target.getResources();
         try {
 
-            Class<?> blossomNeo = Class.forName("blossom.example.Blossom$$Neo");
-            Constructor<?> constructor = blossomNeo.getConstructors()[0];
+            Class<?> tieHandlerClass = Class.forName(target.getClass().getName() + "_TieHandler");
+            Constructor<?> constructor = tieHandlerClass.getConstructor(target.getClass(), Resources.class);
             constructor.setAccessible(true);
             constructor.newInstance(target, res);
 
         } catch (ClassNotFoundException e) {
             throw new ClassCastException();
-        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchMethodException e) {
             throw new RuntimeException();
         }
     }

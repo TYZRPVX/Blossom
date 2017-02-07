@@ -10,7 +10,7 @@ import blossom.core.Blossom;
 public class MainActivity extends AppCompatActivity {
 
     @TieString(R.string.app_name)
-    public String appName1;
+    String appName1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

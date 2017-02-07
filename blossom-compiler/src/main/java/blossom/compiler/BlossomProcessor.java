@@ -1,9 +1,7 @@
 package blossom.compiler;
 
 
-import android.app.Activity;
 import android.content.res.Resources;
-import android.util.Log;
 
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
@@ -25,11 +23,8 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
-import javax.rmi.CORBA.Tie;
 
 import blossom.annotations.TieString;
-
-import static javax.swing.text.html.HTML.Tag.P;
 
 @AutoService(Processor.class)
 public class BlossomProcessor extends AbstractProcessor {

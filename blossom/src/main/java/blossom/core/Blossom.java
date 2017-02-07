@@ -4,11 +4,8 @@ package blossom.core;
 import android.app.Activity;
 import android.content.res.Resources;
 
-import com.apkfuns.logutils.LogUtils;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 public class Blossom {
 

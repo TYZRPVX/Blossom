@@ -4,6 +4,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.tools.lint:lint-api:24.3.1'
     compile 'com.android.tools.lint:lint-checks:24.3.1'
+    compile deps.android
 }
 
 sourceCompatibility = "1.7"

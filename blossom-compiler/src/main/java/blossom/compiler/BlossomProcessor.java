@@ -73,16 +73,6 @@ public class BlossomProcessor extends AbstractProcessor {
                 .addMethod(build)
                 .build();
 
-//        MethodSpec main = MethodSpec.methodBuilder("main")
-//                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-//                .returns(void.class)
-//                .addParameter(String[].class, "args")
-//                .addStatement("$T.out.println($S)", System.class, "Hello, JavaPoet!")
-//                .build();
-//        TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld1")
-//                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-//                .addMethod(main)
-//                .build();
         JavaFile javaFile = JavaFile.builder("blossom.example", blossom$$Neo)
                 .build();
         try {

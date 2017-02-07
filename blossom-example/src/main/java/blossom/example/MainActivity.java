@@ -10,7 +10,7 @@ import blossom.core.Blossom;
 public class MainActivity extends AppCompatActivity {
 
     @TieString(R.string.app_name)
-    public String appName;
+    public String appName1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,9 +18,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Blossom.tie(this);
-//        String string = this.getResources().getString(2131099668);
 
         TextView textView = (TextView) findViewById(R.id.textview);
-        textView.setText(appName);
+        textView.setText(appName1);
     }
 }

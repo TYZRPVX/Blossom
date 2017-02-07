@@ -51,34 +51,34 @@ public class BlossomProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
 
         Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(TieString.class);
-        int value = 0;
         for (Element element : elements) {
             TieString annotation = element.getAnnotation(TieString.class);
-            value = annotation.value();
-        }
-        ClassName className = ClassName.get("blossom.example", "MainActivity");
-        TypeVariableName typeVariableName = TypeVariableName.get("T", className);
+            int value = annotation.value();
 
-        MethodSpec build = MethodSpec.constructorBuilder()
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(typeVariableName, "target")
-                .addParameter(Resources.class, "res")
-                .addStatement("target.appName = res.getString($L)", value)
-                .addJavadoc("$S", elements.toString())
-                .build();
+            ClassName className = ClassName.get("blossom.example", "MainActivity");
+            TypeVariableName typeVariableName = TypeVariableName.get("T", className);
 
-        TypeSpec blossom$$Neo = TypeSpec.classBuilder("Blossom$$Neo")
-                .addModifiers(Modifier.PUBLIC)
-                .addTypeVariable(typeVariableName)
-                .addMethod(build)
-                .build();
+            MethodSpec build = MethodSpec.constructorBuilder()
+                    .addModifiers(Modifier.PUBLIC)
+                    .addParameter(typeVariableName, "target")
+                    .addParameter(Resources.class, "res")
+                    .addStatement("target.$L = res.getString($L)", element.getSimpleName(), value)
+                    .addJavadoc("$S", element.getEnclosingElement())
+                    .build();
 
-        JavaFile javaFile = JavaFile.builder("blossom.example", blossom$$Neo)
-                .build();
-        try {
-            javaFile.writeTo(processingEnv.getFiler());
-        } catch (IOException e) {
-            e.printStackTrace();
+            TypeSpec blossom$$Neo = TypeSpec.classBuilder("Blossom$$Neo")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addTypeVariable(typeVariableName)
+                    .addMethod(build)
+                    .build();
+
+            JavaFile javaFile = JavaFile.builder("blossom.example", blossom$$Neo)
+                    .build();
+            try {
+                javaFile.writeTo(processingEnv.getFiler());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }

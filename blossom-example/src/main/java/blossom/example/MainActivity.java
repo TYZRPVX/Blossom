@@ -12,6 +12,9 @@ public class MainActivity extends AppCompatActivity {
     @TieString(R.string.app_name)
     String appName1;
 
+    @TieString(R.string.button_name)
+    String buttonName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,6 +23,6 @@ public class MainActivity extends AppCompatActivity {
         Blossom.tie(this);
 
         TextView textView = (TextView) findViewById(R.id.textview);
-        textView.setText(appName1);
+        textView.setText(buttonName);
     }
 }

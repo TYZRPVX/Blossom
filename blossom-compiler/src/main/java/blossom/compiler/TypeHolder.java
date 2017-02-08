@@ -24,11 +24,11 @@ public class TypeHolder {
         holder.put(element, annoClass);
     }
 
-    public void addStatements(MethodSpec.Builder ctorBuilder) {
+    public void appendAssignStatements(MethodSpec.Builder ctorBuilder) {
 
-        for (Element element : holder.keySet()) {
-
-            Class<? extends Annotation> annoClass = holder.get(element);
+        for (Map.Entry<Element, Class<? extends Annotation>> entry : holder.entrySet()) {
+            Element element = entry.getKey();
+            Class<? extends Annotation> annoClass = entry.getValue();
 
             if (annoClass == TieString.class) {
                 int id = element.getAnnotation(TieString.class).value();

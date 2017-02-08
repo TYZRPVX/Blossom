@@ -27,7 +27,6 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 
 import blossom.annotations.OnClick;
@@ -52,7 +51,6 @@ public class BlossomProcessor extends AbstractProcessor {
     private Filer filer;
 
     static String nameHandler(String targetName) {
-        // // MainActivity_TieHandler
         return targetName + "_TieHandler";
     }
 
@@ -79,20 +77,12 @@ public class BlossomProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
 
-
-        // @TieString
-        // {MainActivity: [TieHolder1, TieHolder2]}
-        // TypeHolder: <TieString-[appName, buttonName]>
         Map<Element, Class<? extends Annotation>> statementSummary = new HashMap<>();
-        for (Element element : roundEnvironment.getElementsAnnotatedWith(TieString.class)) {
-
-            statementSummary.put(element, TieString.class);
-        }
-
-        // @TieView
-        for (Element element : roundEnvironment.getElementsAnnotatedWith(TieView.class)) {
-
-            statementSummary.put(element, TieView.class);
+        for (Class<? extends Annotation> fieldAnnotation : FIELD_ANNOTATIONS) {
+            Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(fieldAnnotation);
+            for (Element element : elements) {
+                statementSummary.put(element, fieldAnnotation);
+            }
         }
 
         brewJava(statementSummary);
@@ -103,7 +93,10 @@ public class BlossomProcessor extends AbstractProcessor {
 
         Map<TypeElement, TypeHolder> classifiedStatement
                 = classifyStatementSummary(statementSummary);
-        for (TypeElement typeElement : classifiedStatement.keySet()) {
+
+        for (Map.Entry<TypeElement, TypeHolder> entry : classifiedStatement.entrySet()) {
+            TypeElement typeElement = entry.getKey();
+            TypeHolder typeHolder = entry.getValue();
 
             ClassName className = ClassName.get(typeElement);
             TypeVariableName typeVariableName = TypeVariableName.get("T", className);
@@ -112,8 +105,7 @@ public class BlossomProcessor extends AbstractProcessor {
                     .addParameter(typeVariableName, "target")
                     .addParameter(Resources.class, "res");
 
-            TypeHolder typeHolder = classifiedStatement.get(typeElement);
-            typeHolder.addStatements(ctorBuilder);
+            typeHolder.appendAssignStatements(ctorBuilder);
 
             String targetClassName = typeElement.getSimpleName().toString();
             String packageName = typeElement.getEnclosingElement().toString();
@@ -139,10 +131,11 @@ public class BlossomProcessor extends AbstractProcessor {
     private Map<TypeElement, TypeHolder> classifyStatementSummary(Map<Element, Class<? extends Annotation>> statementSummary) {
 
         Map<TypeElement, TypeHolder> classifiedStatement = new HashMap<>();
-        for (Element element : statementSummary.keySet()) {
-            TypeElement typeElement = (TypeElement) element.getEnclosingElement(); // package Element
-            Class<? extends Annotation> annoClass = statementSummary.get(element);
+        for (Map.Entry<Element, Class<? extends Annotation>> entry : statementSummary.entrySet()) {
+            Element element = entry.getKey();
+            Class<? extends Annotation> annoClass = entry.getValue();
 
+            TypeElement typeElement = (TypeElement) element.getEnclosingElement(); // package Element
             if (!classifiedStatement.containsKey(typeElement)) {
                 TypeHolder typeHolder = new TypeHolder();
                 typeHolder.put(element, annoClass);

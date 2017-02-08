@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import blossom.annotations.TieString;
+import blossom.annotations.TieView;
 import blossom.core.Blossom;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,16 +19,16 @@ public class MainActivity extends AppCompatActivity {
     @TieString(R.string.button_name)
     String buttonName;
 
+    @TieView(R.id.textview)
+    TextView textView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         Blossom.tie(this);
 
-        TextView textView = (TextView) findViewById(R.id.textview);
         textView.setText(appName1);
-
         Button button = (Button) findViewById(R.id.button);
         button.setText(buttonName);
         button.setOnClickListener(new View.OnClickListener() {

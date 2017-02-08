@@ -11,9 +11,11 @@ import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,21 +27,45 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 
+import blossom.annotations.OnClick;
+import blossom.annotations.OnLongClick;
+import blossom.annotations.TieLayout;
 import blossom.annotations.TieString;
+import blossom.annotations.TieView;
 
 @AutoService(Processor.class)
 public class BlossomProcessor extends AbstractProcessor {
 
+    public static List<Class<? extends Annotation>> FIELD_ANNOTATIONS = Arrays.asList(
+            TieLayout.class,
+            TieString.class,
+            TieView.class
+    );
+    public static List<Class<? extends Annotation>> LISTENER_ANNOTATIONS = Arrays.asList(
+            OnClick.class,
+            OnLongClick.class
+    );
     private Elements elementUtils;
     private Filer filer;
+
+    static String nameHandler(String targetName) {
+        // // MainActivity_TieHandler
+        return targetName + "_TieHandler";
+    }
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
 
         Set<String> types = new LinkedHashSet<>();
-        types.add(TieString.class.getCanonicalName());
+        for (Class<? extends Annotation> annotation : FIELD_ANNOTATIONS) {
+            types.add(annotation.getCanonicalName());
+        }
+        for (Class<? extends Annotation> annotation : LISTENER_ANNOTATIONS) {
+            types.add(annotation.getCanonicalName());
+        }
         return types;
     }
 
@@ -50,58 +76,94 @@ public class BlossomProcessor extends AbstractProcessor {
         filer = env.getFiler();
     }
 
-    static String nameHandler(String targetName) {
-        // // MainActivity_TieHandler
-        return targetName + "_TieHandler";
-    }
-
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
 
 
         // @TieString
-        Map<TypeElement, Set<Element>> statementSummary = new HashMap<>(); // {MainActivity:[appName, buttonName]}
+        // {MainActivity: [TieHolder1, TieHolder2]}
+        // TypeHolder: <TieString-[appName, buttonName]>
+        Map<Element, Class<? extends Annotation>> statementSummary = new HashMap<>();
         for (Element element : roundEnvironment.getElementsAnnotatedWith(TieString.class)) {
-//            int id = element.getAnnotation(TieString.class).value();
 
-            TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
-            if (statementSummary.containsKey(enclosingElement)) {
-                Set<Element> elements = statementSummary.get(enclosingElement);
-                elements.add(element);
-            } else {
-                Set<Element> elements = new HashSet<>();
-                elements.add(element);
-                statementSummary.put(enclosingElement, elements);
-            }
-//            String targetClassName = enclosingElement.getSimpleName().toString();
-//            String packageName = enclosingElement.getQualifiedName().toString();
-//
-//            ClassName className = ClassName.get(enclosingElement);
-//            TypeVariableName typeVariableName = TypeVariableName.get("T", className);
-//
-//            tieStringBuilder.addStatement("target.$L = res.getString($L)", element.getSimpleName(), id);
-//
-//
-//            TypeSpec handler = TypeSpec.classBuilder(nameHandler(targetClassName))
-//                    .addModifiers(Modifier.PUBLIC)
-//                    .addTypeVariable(typeVariableName)
-//                    .addMethod(build)
-//                    .build();
-//
-//            JavaFile javaFile = JavaFile.builder(packageName, handler)
-//                    .build();
-//            try {
-//                javaFile.writeTo(processingEnv.getFiler());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            statementSummary.put(element, TieString.class);
         }
-        brewTieStringJava(statementSummary);
 
+        // @TieView
+        for (Element element : roundEnvironment.getElementsAnnotatedWith(TieView.class)) {
+
+            statementSummary.put(element, TieView.class);
+        }
+
+        brewJava(statementSummary);
         return false;
     }
 
-    public void brewTieStringJava(Map<TypeElement, Set<Element>> statementSummary) {
+    private void brewJava(Map<Element, Class<? extends Annotation>> statementSummary) {
+
+        Map<TypeElement, TypeHolder> classifiedStatement
+                = classifyStatementSummary(statementSummary);
+        for (TypeElement typeElement : classifiedStatement.keySet()) {
+
+            ClassName className = ClassName.get(typeElement);
+            TypeVariableName typeVariableName = TypeVariableName.get("T", className);
+            MethodSpec.Builder ctorBuilder = MethodSpec.constructorBuilder()
+                    .addModifiers(Modifier.PUBLIC)
+                    .addParameter(typeVariableName, "target")
+                    .addParameter(Resources.class, "res");
+
+            TypeHolder typeHolder = classifiedStatement.get(typeElement);
+            List<String> statements = typeHolder.assembleStatements();
+
+            for (String statement : statements) {
+                ctorBuilder.addStatement(statement);
+            }
+
+
+            String targetClassName = typeElement.getSimpleName().toString();
+            String packageName = typeElement.getEnclosingElement().toString();
+
+            TypeSpec handler = TypeSpec.classBuilder(nameHandler(targetClassName))
+                    .addModifiers(Modifier.PUBLIC)
+                    .addTypeVariable(typeVariableName)
+                    .addMethod(ctorBuilder.build())
+                    .build();
+
+            JavaFile file = JavaFile.builder(packageName, handler)
+                    .addFileComment("Auto generated by Blossom")
+                    .build();
+
+            try {
+                file.writeTo(filer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private Map<TypeElement, TypeHolder> classifyStatementSummary(Map<Element, Class<? extends Annotation>> statementSummary) {
+
+        Map<TypeElement, TypeHolder> classifiedStatement = new HashMap<>();
+        for (Element element : statementSummary.keySet()) {
+            TypeElement typeElement = (TypeElement) element.getEnclosingElement(); // package Element
+            Class<? extends Annotation> annoClass = statementSummary.get(element);
+
+            if (!classifiedStatement.containsKey(typeElement)) {
+                TypeHolder typeHolder = new TypeHolder();
+                typeHolder.put(element, annoClass);
+                classifiedStatement.put(typeElement, typeHolder);
+            } else {
+                TypeHolder existedTypeHolder = classifiedStatement.get(typeElement);
+                existedTypeHolder.put(element, annoClass);
+                classifiedStatement.put(typeElement, existedTypeHolder);
+            }
+        }
+        return classifiedStatement;
+    }
+
+    public void brewJava(int dust, Map<TypeElement, Set<Element>> statementSummary) {
+
+
         for (TypeElement typeElement : statementSummary.keySet()) {
 
             ClassName className = ClassName.get(typeElement);
@@ -109,11 +171,12 @@ public class BlossomProcessor extends AbstractProcessor {
             MethodSpec.Builder tieStringBuilder = MethodSpec.constructorBuilder()
                     .addModifiers(Modifier.PUBLIC)
                     .addParameter(typeVariableName, "target")
-                    .addParameter(Resources.class, "res")
-                    .addJavadoc("Auto generated by Blossom");
+                    .addParameter(Resources.class, "res");
 
             Set<Element> elements = statementSummary.get(typeElement);
             for (Element element : elements) {
+                TypeMirror typeMirror = element.asType();
+                Element enclosingElement = element.getEnclosingElement();
                 int id = element.getAnnotation(TieString.class).value();
                 tieStringBuilder.addStatement("target.$L = res.getString($L)", element.getSimpleName(), id);
             }
@@ -127,7 +190,9 @@ public class BlossomProcessor extends AbstractProcessor {
                     .addMethod(tieStringBuilder.build())
                     .build();
 
-            JavaFile file = JavaFile.builder(packageName, handler).build();
+            JavaFile file = JavaFile.builder(packageName, handler)
+                    .addFileComment("Auto generated by Blossom")
+                    .build();
 
             try {
                 file.writeTo(filer);
@@ -136,4 +201,5 @@ public class BlossomProcessor extends AbstractProcessor {
             }
         }
     }
+
 }

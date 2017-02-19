@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import blossom.annotations.OnClick;
 import blossom.annotations.TieString;
 import blossom.annotations.TieView;
 import blossom.core.Blossom;
@@ -31,11 +32,10 @@ public class MainActivity extends AppCompatActivity {
         textView.setText(appName1);
         Button button = (Button) findViewById(R.id.button);
         button.setText(buttonName);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, Main2Activity.class));
-            }
-        });
+    }
+
+    @OnClick(R.id.button)
+    void startActivity(View v) {
+        startActivity(new Intent(MainActivity.this, Main2Activity.class));
     }
 }

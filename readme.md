@@ -19,6 +19,7 @@
     * 必须添加AutoService注解
     * processor 中的getSupportedAnnotationTypes必须添加注解类
     * 注解类必须要实际用在项目源代码里
+    * debug 方法，http://stackoverflow.com/questions/8587096/how-do-you-debug-java-annotation-processors-using-intellij
 
 * 笔记
     * 使用debug工具进行调试效率更高

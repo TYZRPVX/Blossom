@@ -12,6 +12,7 @@ import com.squareup.javapoet.TypeVariableName;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -47,6 +48,15 @@ public class BlossomProcessor extends AbstractProcessor {
             OnClick.class,
             OnLongClick.class
     );
+
+    public static List<Class<? extends Annotation>> ALL_ANNOTATIONS = new ArrayList<>();
+
+    static {
+        // Construct ALL_ANNOTATIONS
+        ALL_ANNOTATIONS.addAll(FIELD_ANNOTATIONS);
+        ALL_ANNOTATIONS.addAll(LISTENER_ANNOTATIONS);
+    }
+
     private Elements elementUtils;
     private Filer filer;
 
@@ -78,7 +88,7 @@ public class BlossomProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
 
         Map<Element, Class<? extends Annotation>> assignStatementSummary = new HashMap<>();
-        for (Class<? extends Annotation> fieldAnnotation : FIELD_ANNOTATIONS) {
+        for (Class<? extends Annotation> fieldAnnotation : ALL_ANNOTATIONS) {
             Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(fieldAnnotation);
             for (Element element : elements) {
                 assignStatementSummary.put(element, fieldAnnotation);
@@ -102,7 +112,7 @@ public class BlossomProcessor extends AbstractProcessor {
             TypeVariableName typeVariableName = TypeVariableName.get("T", className);
             MethodSpec.Builder ctorBuilder = MethodSpec.constructorBuilder()
                     .addModifiers(Modifier.PUBLIC)
-                    .addParameter(typeVariableName, "target")
+                    .addParameter(typeVariableName, "target", Modifier.FINAL)
                     .addParameter(Resources.class, "res");
 
             typeHolder.appendAssignStatements(ctorBuilder);

@@ -82,6 +82,7 @@ public class BlossomProcessor extends AbstractProcessor {
         super.init(env);
         elementUtils = env.getElementUtils();
         filer = env.getFiler();
+        ProcessMessager.init(processingEnv.getMessager());
     }
 
     @Override

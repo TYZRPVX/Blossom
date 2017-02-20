@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.lang.model.element.Element;
 
 import blossom.annotations.OnClick;
+import blossom.annotations.OnLongClick;
 import blossom.annotations.TieString;
 import blossom.annotations.TieView;
 
@@ -29,6 +30,7 @@ public class TypeHolder {
 
     public void appendAssignStatements(MethodSpec.Builder ctorBuilder) {
 
+        IdMap idMap = new IdMap();
         for (Map.Entry<Element, Class<? extends Annotation>> entry : holder.entrySet()) {
             Element element = entry.getKey();
             Class<? extends Annotation> annoClass = entry.getValue();
@@ -38,6 +40,12 @@ public class TypeHolder {
                 ctorBuilder.addStatement("target.$L = res.getString($L)", element.getSimpleName(), id);
             } else if (annoClass == TieView.class) {
                 int id = element.getAnnotation(TieView.class).value();
+                if (!idMap.containsKey(id)) {
+                    idMap.put(id, TieView.class);
+                } else {
+                    ProcessMessager.error(element, "Attempt to use @%s for an already ID %d"
+                            , TieView.class.getSimpleName(), id);
+                }
                 ctorBuilder.addStatement("target.$L = ($T) target.findViewById($L)"
                         , element.getSimpleName(), element.asType(), id);
             } else if (annoClass == OnClick.class) {
@@ -51,6 +59,9 @@ public class TypeHolder {
                         .endControlFlow()
                         .endControlFlow()
                         .addStatement(")");
+            } else if (annoClass == OnLongClick.class) {
+                int id = element.getAnnotation(OnLongClick.class).value();
+                // TODO: 17/02/19
             }
         }
     }

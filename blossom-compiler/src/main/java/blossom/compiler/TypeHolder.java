@@ -30,7 +30,7 @@ public class TypeHolder {
 
     public void appendAssignStatements(MethodSpec.Builder ctorBuilder) {
 
-        IdMap idMap = new IdMap();
+        RepetitiveTieChecker checker = new RepetitiveTieChecker();
         for (Map.Entry<Element, Class<? extends Annotation>> entry : holder.entrySet()) {
             Element element = entry.getKey();
             Class<? extends Annotation> annoClass = entry.getValue();
@@ -40,17 +40,14 @@ public class TypeHolder {
                 ctorBuilder.addStatement("target.$L = res.getString($L)", element.getSimpleName(), id);
             } else if (annoClass == TieView.class) {
                 int id = element.getAnnotation(TieView.class).value();
-                if (!idMap.containsKey(id)) {
-                    idMap.put(id, TieView.class);
-                } else {
-                    ProcessMessager.error(element, "Attempt to use @%s for an already ID %d"
-                            , TieView.class.getSimpleName(), id);
-                }
+                checker.check(id, TieView.class, element);
+
                 ctorBuilder.addStatement("target.$L = ($T) target.findViewById($L)"
                         , element.getSimpleName(), element.asType(), id);
             } else if (annoClass == OnClick.class) {
                 int id = element.getAnnotation(OnClick.class).value();
-                // not tie yet
+                checker.check(id, OnClick.class, element);
+                // TODO: 17/02/20 check this id has been tied
                 ctorBuilder.addStatement("$T $L = target.findViewById($L)"
                         , View.class, onClickName(id), id);
                 ctorBuilder.beginControlFlow("$L.setOnClickListener(new $T.OnClickListener() ", onClickName(id), View.class)
@@ -61,12 +58,18 @@ public class TypeHolder {
                         .addStatement(")");
             } else if (annoClass == OnLongClick.class) {
                 int id = element.getAnnotation(OnLongClick.class).value();
-                // TODO: 17/02/19
+                checker.check(id, OnLongClick.class, element);
+                ctorBuilder.addStatement("$T $L = target.findViewById($L)"
+                        , View.class, onLongClickName(id), id);
             }
         }
     }
 
     private String onClickName(int id) {
         return "onClick" + id;
+    }
+
+    private String onLongClickName(int id) {
+        return "onLongClick" + id;
     }
 }

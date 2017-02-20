@@ -25,9 +25,6 @@ public class MainActivity extends AppCompatActivity {
     @TieView(R.id.textview)
     TextView textView;
 
-    @TieView(R.id.textview) // TODO: 17/02/19 应该直接抛异常
-    TextView duplicatedTextView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +38,10 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.button)
     void startActivity(View v) {
+        startActivity(new Intent(MainActivity.this, Main2Activity.class));
+    }
+    @OnClick(R.id.button)
+    void startActivity1(View v) {
         startActivity(new Intent(MainActivity.this, Main2Activity.class));
     }
 

@@ -61,6 +61,13 @@ public class TypeHolder {
                 checker.check(id, OnLongClick.class, element);
                 ctorBuilder.addStatement("$T $L = target.findViewById($L)"
                         , View.class, onLongClickName(id), id);
+                ctorBuilder.beginControlFlow("$L.setOnLongClickListener(new $T.OnLongClickListener() "
+                        , onLongClickName(id), View.class)
+                        .beginControlFlow("@Override public boolean onLongClick($T v) ", View.class)
+                        .addStatement("return target.$L(v)", element.getSimpleName())
+                        .endControlFlow()
+                        .endControlFlow()
+                        .addStatement(")");
             }
         }
     }

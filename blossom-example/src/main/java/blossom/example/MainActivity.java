@@ -40,13 +40,11 @@ public class MainActivity extends AppCompatActivity {
     void startActivity(View v) {
         startActivity(new Intent(MainActivity.this, Main2Activity.class));
     }
-    @OnClick(R.id.button)
-    void startActivity1(View v) {
-        startActivity(new Intent(MainActivity.this, Main2Activity.class));
-    }
+
 
     @OnLongClick(R.id.button)
-    void showToast(View v) {
+    boolean showToast(View v) {
         Toast.makeText(this, "long click", Toast.LENGTH_SHORT).show();
+        return true;
     }
 }

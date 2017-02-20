@@ -28,12 +28,12 @@ public class RepetitiveTieChecker {
 
     }
 
-    static class Atom {
+    private static class Atom {
 
         int id;
         Class<? extends Annotation> annoClass;
 
-        public Atom(int id, Class<? extends Annotation> annoClass) {
+        Atom(int id, Class<? extends Annotation> annoClass) {
             this.id = id;
             this.annoClass = annoClass;
         }
@@ -53,6 +53,9 @@ public class RepetitiveTieChecker {
             return true;
         }
 
+        /**
+         * ensure the same id with the same tie annotation throw an exception
+         */
         @Override
         public int hashCode() {
             int hash = 7;

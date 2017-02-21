@@ -5,8 +5,8 @@ import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;
 
-import static android.R.id.message;
 import static javax.tools.Diagnostic.Kind.ERROR;
+import static javax.tools.Diagnostic.Kind.NOTE;
 
 public class ProcessMessager {
 
@@ -24,10 +24,15 @@ public class ProcessMessager {
         printMessage(ERROR, element, message, args);
     }
 
+    public static void note(Element element, String message, Object... args) {
+        printMessage(NOTE, element, message, args);
+    }
+
     private static void printMessage(Diagnostic.Kind kind, Element element, String message, Object[] args) {
+        String fMessage = message;
         if (args.length > 0) {
-            message = String.format(message, args);
+            fMessage = String.format(message, args);
         }
-        sMessager.printMessage(kind, message, element);
+        sMessager.printMessage(kind, fMessage, element);
     }
 }

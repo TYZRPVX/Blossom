@@ -42,6 +42,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @OnClick(R.id.button)
+    void startActivity1(View v) {
+        startActivity(new Intent(MainActivity.this, Main2Activity.class));
+    }
+
+
     @OnLongClick(R.id.button)
     boolean showToast(View v) {
         Toast.makeText(this, "long click", Toast.LENGTH_SHORT).show();

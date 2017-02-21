@@ -16,22 +16,25 @@ import blossom.annotations.OnLongClick;
 import blossom.annotations.TieString;
 import blossom.annotations.TieView;
 
-public class TypeHolder {
+/**
+ * Store all annotation context in a class
+ */
+public class TypeElementContext {
 
-    private Map<Element, Class<? extends Annotation>> holder;
+    private Map<Element, Class<? extends Annotation>> context;
 
-    public TypeHolder() {
-        holder = new HashMap<>();
+    public TypeElementContext() {
+        context = new HashMap<>();
     }
 
     public void put(Element element, Class<? extends Annotation> annoClass) {
-        holder.put(element, annoClass);
+        context.put(element, annoClass);
     }
 
-    public void appendAssignStatements(MethodSpec.Builder ctorBuilder) {
+    public void addStatementsTo(MethodSpec.Builder ctorBuilder) {
 
-        RepetitiveTieChecker checker = new RepetitiveTieChecker();
-        for (Map.Entry<Element, Class<? extends Annotation>> entry : holder.entrySet()) {
+        RedundantTieChecker checker = new RedundantTieChecker();
+        for (Map.Entry<Element, Class<? extends Annotation>> entry : context.entrySet()) {
             Element element = entry.getKey();
             Class<? extends Annotation> annoClass = entry.getValue();
 

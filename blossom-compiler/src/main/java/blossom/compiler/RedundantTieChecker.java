@@ -7,20 +7,22 @@ import java.util.Set;
 
 import javax.lang.model.element.Element;
 
+/**
+ * ensure the same annotation can't be used on the same ID
+ */
+public class RedundantTieChecker {
 
-public class RepetitiveTieChecker {
+    private Set<Bead> tieChain;
 
-    private Set<Atom> tieChain;
-
-    public RepetitiveTieChecker() {
+    public RedundantTieChecker() {
         tieChain = new HashSet<>();
     }
 
     public void check(Integer id, Class<? extends Annotation> annoClass, Element element) {
 
-        Atom atom = new Atom(id, annoClass);
-        if (!tieChain.contains(atom)) {
-            tieChain.add(atom);
+        Bead bead = new Bead(id, annoClass);
+        if (!tieChain.contains(bead)) {
+            tieChain.add(bead);
             return;
         }
         ProcessMessager.error(element, "Attempt to use @%s for an already ID %d"
@@ -28,34 +30,36 @@ public class RepetitiveTieChecker {
 
     }
 
-    private static class Atom {
+    private static class Bead {
 
         int id;
         Class<? extends Annotation> annoClass;
 
-        Atom(int id, Class<? extends Annotation> annoClass) {
+        Bead(int id, Class<? extends Annotation> annoClass) {
             this.id = id;
             this.annoClass = annoClass;
         }
 
+        /**
+         * ensure the same id with the same tie annotation throw an exception
+         * eg. OnClick1 == OnClick1, OnClick1 != OnLongClick1
+         */
         @Override
         public boolean equals(Object o) {
             if (o == null) {
                 return false;
             }
-            if (!Atom.class.isAssignableFrom(o.getClass())) {
+            if (!Bead.class.isAssignableFrom(o.getClass())) {
                 return false;
             }
-            final Atom other = (Atom) o;
+            final Bead other = (Bead) o;
             if (this.annoClass != other.annoClass || this.id != other.id) {
                 return false;
             }
             return true;
         }
 
-        /**
-         * ensure the same id with the same tie annotation throw an exception
-         */
+
         @Override
         public int hashCode() {
             int hash = 7;

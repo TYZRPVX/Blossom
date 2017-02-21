@@ -28,7 +28,6 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.util.Elements;
 
 import blossom.annotations.OnClick;
 import blossom.annotations.OnLongClick;
@@ -57,10 +56,9 @@ public class BlossomProcessor extends AbstractProcessor {
         ALL_ANNOTATIONS.addAll(LISTENER_ANNOTATIONS);
     }
 
-    private Elements elementUtils;
     private Filer filer;
 
-    static String assembleHandlerName(String targetName) {
+    private static String handlerClassName(String targetName) {
         return targetName + "_TieHandler";
     }
 
@@ -80,7 +78,6 @@ public class BlossomProcessor extends AbstractProcessor {
     @Override
     public synchronized void init(ProcessingEnvironment env) {
         super.init(env);
-        elementUtils = env.getElementUtils();
         filer = env.getFiler();
         ProcessMessager.init(processingEnv.getMessager());
     }
@@ -88,26 +85,26 @@ public class BlossomProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
 
-        Map<Element, Class<? extends Annotation>> assignStatementSummary = new HashMap<>();
-        for (Class<? extends Annotation> fieldAnnotation : ALL_ANNOTATIONS) {
-            Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(fieldAnnotation);
+        Map<Element, Class<? extends Annotation>> annotationContext = new HashMap<>();
+        for (Class<? extends Annotation> annotationClass : ALL_ANNOTATIONS) {
+            Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(annotationClass);
             for (Element element : elements) {
-                assignStatementSummary.put(element, fieldAnnotation);
+                annotationContext.put(element, annotationClass);
             }
         }
 
-        brewJava(assignStatementSummary);
+        brewJava(annotationContext);
         return false;
     }
 
-    private void brewJava(Map<Element, Class<? extends Annotation>> statementSummary) {
+    private void brewJava(Map<Element, Class<? extends Annotation>> annotationContext) {
 
-        Map<TypeElement, TypeHolder> classifiedStatement
-                = classifyStatementSummary(statementSummary);
+        Map<TypeElement, TypeElementContext> classifiedStatement
+                = classifyAnnotationContext(annotationContext);
 
-        for (Map.Entry<TypeElement, TypeHolder> entry : classifiedStatement.entrySet()) {
+        for (Map.Entry<TypeElement, TypeElementContext> entry : classifiedStatement.entrySet()) {
             TypeElement typeElement = entry.getKey();
-            TypeHolder typeHolder = entry.getValue();
+            TypeElementContext typeElementContext = entry.getValue();
 
             ClassName className = ClassName.get(typeElement);
             TypeVariableName typeVariableName = TypeVariableName.get("T", className);
@@ -116,12 +113,12 @@ public class BlossomProcessor extends AbstractProcessor {
                     .addParameter(typeVariableName, "target", Modifier.FINAL)
                     .addParameter(Resources.class, "res");
 
-            typeHolder.appendAssignStatements(ctorBuilder);
+            typeElementContext.addStatementsTo(ctorBuilder);
 
             String targetClassName = typeElement.getSimpleName().toString();
             String targetPackageName = typeElement.getEnclosingElement().toString();
 
-            TypeSpec handler = TypeSpec.classBuilder(assembleHandlerName(targetClassName))
+            TypeSpec handler = TypeSpec.classBuilder(handlerClassName(targetClassName))
                     .addModifiers(Modifier.PUBLIC)
                     .addTypeVariable(typeVariableName)
                     .addMethod(ctorBuilder.build())
@@ -139,22 +136,30 @@ public class BlossomProcessor extends AbstractProcessor {
         }
     }
 
-    private Map<TypeElement, TypeHolder> classifyStatementSummary(Map<Element, Class<? extends Annotation>> statementSummary) {
+    /**
+     * Classify each TypeElementContext according to its class full path
+     *
+     * @param annotationContext: all annotations in project source with their context
+     * @return KEY: full path class element
+     * VALUE: annotation stuff of this class element
+     */
+    private Map<TypeElement, TypeElementContext>
+    classifyAnnotationContext(Map<Element, Class<? extends Annotation>> annotationContext) {
 
-        Map<TypeElement, TypeHolder> classifiedAssignStatement = new HashMap<>();
-        for (Map.Entry<Element, Class<? extends Annotation>> entry : statementSummary.entrySet()) {
+        Map<TypeElement, TypeElementContext> classifiedAssignStatement = new HashMap<>();
+        for (Map.Entry<Element, Class<? extends Annotation>> entry : annotationContext.entrySet()) {
             Element element = entry.getKey();
             Class<? extends Annotation> annoClass = entry.getValue();
 
-            TypeElement typeElement = (TypeElement) element.getEnclosingElement(); // package Element
+            TypeElement typeElement = (TypeElement) element.getEnclosingElement(); // package Element, eg. blossom.example.MainActivity
             if (!classifiedAssignStatement.containsKey(typeElement)) {
-                TypeHolder typeHolder = new TypeHolder();
-                typeHolder.put(element, annoClass);
-                classifiedAssignStatement.put(typeElement, typeHolder);
+                TypeElementContext typeElementContext = new TypeElementContext();
+                typeElementContext.put(element, annoClass);
+                classifiedAssignStatement.put(typeElement, typeElementContext);
             } else {
-                TypeHolder existedTypeHolder = classifiedAssignStatement.get(typeElement);
-                existedTypeHolder.put(element, annoClass);
-                classifiedAssignStatement.put(typeElement, existedTypeHolder);
+                TypeElementContext existedTypeElementContext = classifiedAssignStatement.get(typeElement);
+                existedTypeElementContext.put(element, annoClass);
+                classifiedAssignStatement.put(typeElement, existedTypeElementContext);
             }
         }
         return classifiedAssignStatement;

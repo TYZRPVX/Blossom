@@ -146,23 +146,23 @@ public class BlossomProcessor extends AbstractProcessor {
     private Map<TypeElement, TypeElementContext>
     classifyAnnotationContext(Map<Element, Class<? extends Annotation>> annotationContext) {
 
-        Map<TypeElement, TypeElementContext> classifiedAssignStatement = new HashMap<>();
+        Map<TypeElement, TypeElementContext> classifiedAnnotationContext = new HashMap<>();
         for (Map.Entry<Element, Class<? extends Annotation>> entry : annotationContext.entrySet()) {
             Element element = entry.getKey();
             Class<? extends Annotation> annoClass = entry.getValue();
 
             TypeElement typeElement = (TypeElement) element.getEnclosingElement(); // package Element, eg. blossom.example.MainActivity
-            if (!classifiedAssignStatement.containsKey(typeElement)) {
+            if (!classifiedAnnotationContext.containsKey(typeElement)) {
                 TypeElementContext typeElementContext = new TypeElementContext();
                 typeElementContext.put(element, annoClass);
-                classifiedAssignStatement.put(typeElement, typeElementContext);
+                classifiedAnnotationContext.put(typeElement, typeElementContext);
             } else {
-                TypeElementContext existedTypeElementContext = classifiedAssignStatement.get(typeElement);
+                TypeElementContext existedTypeElementContext = classifiedAnnotationContext.get(typeElement);
                 existedTypeElementContext.put(element, annoClass);
-                classifiedAssignStatement.put(typeElement, existedTypeElementContext);
+                classifiedAnnotationContext.put(typeElement, existedTypeElementContext);
             }
         }
-        return classifiedAssignStatement;
+        return classifiedAnnotationContext;
     }
 
 }

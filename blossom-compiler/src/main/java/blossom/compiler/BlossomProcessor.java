@@ -31,6 +31,8 @@ import javax.lang.model.element.TypeElement;
 
 import blossom.annotations.OnClick;
 import blossom.annotations.OnLongClick;
+import blossom.annotations.TieColor;
+import blossom.annotations.TieDrawable;
 import blossom.annotations.TieLayout;
 import blossom.annotations.TieString;
 import blossom.annotations.TieView;
@@ -41,7 +43,9 @@ public class BlossomProcessor extends AbstractProcessor {
     public static List<Class<? extends Annotation>> FIELD_ANNOTATIONS = Arrays.asList(
             TieLayout.class,
             TieString.class,
-            TieView.class
+            TieView.class,
+            TieDrawable.class,
+            TieColor.class
     );
     public static List<Class<? extends Annotation>> LISTENER_ANNOTATIONS = Arrays.asList(
             OnClick.class,

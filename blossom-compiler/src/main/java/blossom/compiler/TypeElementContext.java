@@ -13,6 +13,8 @@ import javax.lang.model.element.Element;
 
 import blossom.annotations.OnClick;
 import blossom.annotations.OnLongClick;
+import blossom.annotations.TieColor;
+import blossom.annotations.TieDrawable;
 import blossom.annotations.TieString;
 import blossom.annotations.TieView;
 
@@ -41,10 +43,15 @@ public class TypeElementContext {
             if (annoClass == TieString.class) {
                 int id = element.getAnnotation(TieString.class).value();
                 ctorBuilder.addStatement("target.$L = res.getString($L)", element.getSimpleName(), id);
+            } else if (annoClass == TieDrawable.class) {
+                int id = element.getAnnotation(TieDrawable.class).value();
+                ctorBuilder.addStatement("target.$L = res.getDrawable($L)", element.getSimpleName(), id);
+            } else if (annoClass == TieColor.class) {
+                int id = element.getAnnotation(TieColor.class).value();
+                ctorBuilder.addStatement("target.$L = res.getColor($L)", element.getSimpleName(), id); // TODO: 17/02/21 may hint deprecated
             } else if (annoClass == TieView.class) {
                 int id = element.getAnnotation(TieView.class).value();
                 checker.check(id, TieView.class, element);
-
                 ctorBuilder.addStatement("target.$L = ($T) target.findViewById($L)"
                         , element.getSimpleName(), element.asType(), id);
             } else if (annoClass == OnClick.class) {

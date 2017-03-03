@@ -3,6 +3,8 @@ package blossom.core;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.support.v4.app.Fragment;
+import android.view.View;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -24,5 +26,9 @@ public class Blossom {
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchMethodException e) {
             throw new RuntimeException();
         }
+    }
+
+    public static void tie(Fragment fragment, View view) {
+        // TODO: 17/02/24 tie fragment field
     }
 }

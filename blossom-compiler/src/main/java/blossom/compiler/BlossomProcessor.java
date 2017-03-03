@@ -33,7 +33,6 @@ import blossom.annotations.OnClick;
 import blossom.annotations.OnLongClick;
 import blossom.annotations.TieColor;
 import blossom.annotations.TieDrawable;
-import blossom.annotations.TieLayout;
 import blossom.annotations.TieString;
 import blossom.annotations.TieView;
 

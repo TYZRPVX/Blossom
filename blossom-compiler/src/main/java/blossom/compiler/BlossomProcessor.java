@@ -2,6 +2,7 @@ package blossom.compiler;
 
 
 import android.content.res.Resources;
+import android.view.View;
 
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
@@ -117,6 +118,7 @@ public class BlossomProcessor extends AbstractProcessor {
                     .addParameter(typeVariableName, "target", Modifier.FINAL)
                     .addParameter(Resources.class, "res");
 
+            ctorBuilder.addStatement("$T contentView = target.findViewById(android.R.id.content)", View.class);
             typeElementContext.addStatementsTo(ctorBuilder);
 
             String targetClassName = typeElement.getSimpleName().toString();

@@ -40,7 +40,6 @@ import blossom.annotations.TieView;
 public class BlossomProcessor extends AbstractProcessor {
 
     public static List<Class<? extends Annotation>> FIELD_ANNOTATIONS = Arrays.asList(
-            TieLayout.class,
             TieString.class,
             TieView.class,
             TieDrawable.class,

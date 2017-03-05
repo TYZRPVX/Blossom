@@ -21,7 +21,7 @@ public class Main2Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main2, container, false);
-        Blossom.tie(this, view);
+//        Blossom.tie(this, view);
         return view;
     }
 }

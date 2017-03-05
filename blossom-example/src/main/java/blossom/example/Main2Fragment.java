@@ -14,7 +14,7 @@ import blossom.core.Blossom;
 
 public class Main2Fragment extends Fragment {
 
-    @TieView(R.id.fragment_main2_textview)
+//    @TieView(R.id.fragment_main2_textview)
     TextView fragment_main2_textview;
 
     @Nullable

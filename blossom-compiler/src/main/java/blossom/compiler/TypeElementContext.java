@@ -1,6 +1,7 @@
 package blossom.compiler;
 
 
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.squareup.javapoet.MethodSpec;
@@ -13,6 +14,7 @@ import javax.lang.model.element.Element;
 
 import blossom.annotations.OnClick;
 import blossom.annotations.OnLongClick;
+import blossom.annotations.OnTouch;
 import blossom.annotations.TieColor;
 import blossom.annotations.TieDrawable;
 import blossom.annotations.TieString;
@@ -78,8 +80,24 @@ public class TypeElementContext {
                         .endControlFlow()
                         .endControlFlow()
                         .addStatement(")");
+            } else if (annoClass == OnTouch.class) {
+                int id = element.getAnnotation(OnTouch.class).value();
+                checker.check(id, OnTouch.class, element);
+                ctorBuilder.addStatement("$T $L = target.findViewById($L)"
+                        , View.class, onTouchName(id), id);
+                ctorBuilder.beginControlFlow("$L.setOnTouchListener(new $T.OnTouchListener() "
+                        , onTouchName(id), View.class)
+                        .beginControlFlow("@Override public boolean onTouch($T v, $T event) ", View.class, MotionEvent.class)
+                        .addStatement("return target.$L(v, event)", element.getSimpleName())
+                        .endControlFlow()
+                        .endControlFlow()
+                        .addStatement(")");
             }
         }
+    }
+
+    private String onTouchName(int id) {
+        return "onTouch" + id;
     }
 
     private String onClickName(int id) {

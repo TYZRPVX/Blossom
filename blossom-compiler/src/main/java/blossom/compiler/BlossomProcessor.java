@@ -31,6 +31,7 @@ import javax.lang.model.element.TypeElement;
 
 import blossom.annotations.OnClick;
 import blossom.annotations.OnLongClick;
+import blossom.annotations.OnTouch;
 import blossom.annotations.TieColor;
 import blossom.annotations.TieDrawable;
 import blossom.annotations.TieString;
@@ -47,7 +48,8 @@ public class BlossomProcessor extends AbstractProcessor {
     );
     public static List<Class<? extends Annotation>> LISTENER_ANNOTATIONS = Arrays.asList(
             OnClick.class,
-            OnLongClick.class
+            OnLongClick.class,
+            OnTouch.class
     );
 
     public static List<Class<? extends Annotation>> ALL_ANNOTATIONS = new ArrayList<>();

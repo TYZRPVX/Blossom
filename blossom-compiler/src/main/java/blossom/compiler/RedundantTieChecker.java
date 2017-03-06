@@ -12,7 +12,7 @@ import javax.lang.model.element.Element;
  */
 public class RedundantTieChecker {
 
-    private Set<Bead> tieChain;
+    private final Set<Bead> tieChain;
 
     public RedundantTieChecker() {
         tieChain = new HashSet<>();
@@ -32,8 +32,8 @@ public class RedundantTieChecker {
 
     private static class Bead {
 
-        int id;
-        Class<? extends Annotation> annoClass;
+        final int id;
+        final Class<? extends Annotation> annoClass;
 
         Bead(int id, Class<? extends Annotation> annoClass) {
             this.id = id;

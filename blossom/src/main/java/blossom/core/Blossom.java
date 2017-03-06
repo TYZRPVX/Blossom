@@ -26,11 +26,12 @@ public class Blossom {
         } catch (ClassNotFoundException e) {
             throw new ClassCastException();
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchMethodException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 
     public static void tie(Object target, View source) {
         executeTie(target, source);
     }
+
 }

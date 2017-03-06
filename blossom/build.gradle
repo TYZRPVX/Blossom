@@ -28,6 +28,5 @@ dependencies {
     })
     compile deps.supportCompat
     testCompile deps.junit
-    compile deps.blossomAnno
     compile deps.logUtils
 }

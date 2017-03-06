@@ -41,13 +41,13 @@ import blossom.annotations.TieView;
 @AutoService(Processor.class)
 public class BlossomProcessor extends AbstractProcessor {
 
-    public static List<Class<? extends Annotation>> FIELD_ANNOTATIONS = Arrays.asList(
+    public final static List<Class<? extends Annotation>> FIELD_ANNOTATIONS = Arrays.asList(
             TieString.class,
             TieView.class,
             TieDrawable.class,
             TieColor.class
     );
-    public static List<Class<? extends Annotation>> LISTENER_ANNOTATIONS = Arrays.asList(
+    public final static List<Class<? extends Annotation>> LISTENER_ANNOTATIONS = Arrays.asList(
             OnClick.class,
             OnLongClick.class,
             OnTouch.class
@@ -61,7 +61,7 @@ public class BlossomProcessor extends AbstractProcessor {
         ALL_ANNOTATIONS.addAll(LISTENER_ANNOTATIONS);
     }
 
-    ClassName FINDER_CLASS_NAME = ClassName.get("blossom.core", "Finder");
+    static final ClassName FINDER_CLASS_NAME = ClassName.get("blossom.core", "Finder");
     private Filer filer;
 
     private static String handlerClassName(String targetName) {

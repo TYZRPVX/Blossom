@@ -2,4 +2,7 @@
     <string name="app_name">blossom-example</string>
     <string name="button_name">确定</string>
     <string name="text_view2">text view2</string>
+    <string name="activity_main2_text_view2">activity_main2_text_view2</string>
+    <string name="fragment_main2_textview">fragment_main2_textview</string>
+    <string name="fragment_main2_textview_OK">fragment_main2_textview OK.</string>
 </resources>

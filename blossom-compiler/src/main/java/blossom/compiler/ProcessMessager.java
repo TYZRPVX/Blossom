@@ -16,11 +16,11 @@ public class ProcessMessager {
 
     }
 
-    public static void init(Messager messager) {
+    static void init(Messager messager) {
         sMessager = messager;
     }
 
-    public static void error(Element element, String message, Object... args) {
+    static void error(Element element, String message, Object... args) {
         printMessage(ERROR, element, message, args);
     }
 

@@ -34,7 +34,7 @@ public class Finder {
         } else if (target instanceof android.app.Fragment) {
             return ((android.app.Fragment) target).getResources();
         }
-        throw new IllegalArgumentException("target is not allowed. ");
+        throw new IllegalArgumentException("The type of target is illegal. ");
     }
 
 }

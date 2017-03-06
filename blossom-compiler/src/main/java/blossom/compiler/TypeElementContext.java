@@ -26,8 +26,8 @@ import blossom.annotations.TieView;
  */
 public class TypeElementContext {
 
-    ClassName FINDER_CLASS_NAME = ClassName.get("blossom.core", "Finder");
-    private Map<Element, Class<? extends Annotation>> context;
+    static final ClassName FINDER_CLASS_NAME = ClassName.get("blossom.core", "Finder");
+    private final Map<Element, Class<? extends Annotation>> context;
 
     public TypeElementContext() {
         context = new HashMap<>();

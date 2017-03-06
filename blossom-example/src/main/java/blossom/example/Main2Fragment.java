@@ -23,7 +23,7 @@ public class Main2Fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main2, container, false);
         Blossom.tie(this, view);
 
-        fragment_main2_textview.setText("fragment_main2_textview OK.");
+        fragment_main2_textview.setText(R.string.fragment_main2_textview_OK);
         return view;
     }
 }

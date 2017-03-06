@@ -120,7 +120,6 @@ public class BlossomProcessor extends AbstractProcessor {
                     .addParameter(View.class, "source");
 
             ctorBuilder.addStatement("$T res = $T.getResources(target)", Resources.class, FINDER_CLASS_NAME);
-//            ctorBuilder.addStatement("$T contentView = $T.findContentView(target)", View.class, FINDER_CLASS_NAME);
             typeElementContext.addStatementsTo(ctorBuilder);
 
             String targetClassName = typeElement.getSimpleName().toString();

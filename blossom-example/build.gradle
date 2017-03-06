@@ -31,5 +31,6 @@ dependencies {
     testCompile deps.junit
     compile deps.supportCompat
     compile deps.blossomCore
+    compile deps.blossomAnno
     apt deps.blossomCompiler
 }

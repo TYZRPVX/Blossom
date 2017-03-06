@@ -12,21 +12,10 @@ public class Blossom {
     public static void tie(Activity target) {
 
         View contentView = target.findViewById(android.R.id.content);
-        try {
-
-            Class<?> tieHandlerClass = Class.forName(target.getClass().getName() + "_TieHandler");
-            Constructor<?> constructor = tieHandlerClass.getConstructor(target.getClass(), View.class);
-            constructor.setAccessible(true);
-            constructor.newInstance(target, contentView);
-
-        } catch (ClassNotFoundException e) {
-            throw new ClassCastException();
-        } catch (IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchMethodException e) {
-            throw new RuntimeException();
-        }
+        executeTie(target, contentView);
     }
 
-    public static void tie(Object target, View source) {
+    private static void executeTie(Object target, View source) {
         try {
 
             Class<?> tieHandlerClass = Class.forName(target.getClass().getName() + "_TieHandler");
@@ -39,5 +28,9 @@ public class Blossom {
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchMethodException e) {
             throw new RuntimeException();
         }
+    }
+
+    public static void tie(Object target, View source) {
+        executeTie(target, source);
     }
 }

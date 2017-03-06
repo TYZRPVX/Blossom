@@ -2,7 +2,6 @@ package blossom.core;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.support.v4.app.Fragment;
 import android.view.View;
 
 /**
@@ -19,8 +18,10 @@ public class Finder {
     public static View findContentView(Object target) {
         if (target instanceof Activity) {
             return ((Activity) target).findViewById(android.R.id.content);
-        } else if (target instanceof Fragment) {
-            return ((Fragment) target).getActivity().findViewById(android.R.id.content);
+        } else if (target instanceof android.support.v4.app.Fragment) {
+            return ((android.support.v4.app.Fragment) target).getActivity().findViewById(android.R.id.content);
+        } else if (target instanceof android.app.Fragment) {
+            return ((android.app.Fragment) target).getActivity().findViewById(android.R.id.content);
         }
         throw new IllegalArgumentException("target is not allowed. ");
     }
@@ -28,8 +29,10 @@ public class Finder {
     public static Resources getResources(Object target) {
         if (target instanceof Activity) {
             return ((Activity) target).getResources();
-        } else if (target instanceof Fragment) {
-            return ((Fragment) target).getResources();
+        } else if (target instanceof android.support.v4.app.Fragment) {
+            return ((android.support.v4.app.Fragment) target).getResources();
+        } else if (target instanceof android.app.Fragment) {
+            return ((android.app.Fragment) target).getResources();
         }
         throw new IllegalArgumentException("target is not allowed. ");
     }

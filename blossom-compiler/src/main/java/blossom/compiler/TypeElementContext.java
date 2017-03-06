@@ -56,17 +56,13 @@ public class TypeElementContext {
             } else if (annoClass == TieView.class) {
                 int id = element.getAnnotation(TieView.class).value();
                 checker.check(id, TieView.class, element);
-//                ctorBuilder.addStatement("target.$L = ($T) target.findViewById($L)"
-//                        , element.getSimpleName(), element.asType(), id);
-                ctorBuilder.addStatement("target.$L = $T.findViewAsType(contentView, $L, $T.class)"
+                ctorBuilder.addStatement("target.$L = $T.findViewAsType(source, $L, $T.class)"
                         , element.getSimpleName(), FINDER_CLASS_NAME, id, element.asType());
             } else if (annoClass == OnClick.class) {
                 int id = element.getAnnotation(OnClick.class).value();
                 checker.check(id, OnClick.class, element);
-                // TODO: 17/02/20 check this id has been tied
-//                ctorBuilder.addStatement("$T $L = target.findViewById($L)"
-//                        , View.class, onClickName(id), id);
-                ctorBuilder.addStatement("$T $L = $T.findViewAsType(contentView, $L, $T.class)"
+                // TODO: 17/02/20 check this id has been tied, don't affect efficiency certainly. Later fix
+                ctorBuilder.addStatement("$T $L = $T.findViewAsType(source, $L, $T.class)"
                         , View.class, onClickName(id), FINDER_CLASS_NAME, id, View.class);
                 ctorBuilder.beginControlFlow("$L.setOnClickListener(new $T.OnClickListener() ", onClickName(id), View.class)
                         .beginControlFlow("@Override public void onClick($T v) ", View.class)
@@ -77,9 +73,7 @@ public class TypeElementContext {
             } else if (annoClass == OnLongClick.class) {
                 int id = element.getAnnotation(OnLongClick.class).value();
                 checker.check(id, OnLongClick.class, element);
-//                ctorBuilder.addStatement("$T $L = target.findViewById($L)"
-//                        , View.class, onLongClickName(id), id);
-                ctorBuilder.addStatement("$T $L = $T.findViewAsType(contentView, $L, $T.class)"
+                ctorBuilder.addStatement("$T $L = $T.findViewAsType(source, $L, $T.class)"
                         , View.class, onLongClickName(id), FINDER_CLASS_NAME, id, View.class);
                 ctorBuilder.beginControlFlow("$L.setOnLongClickListener(new $T.OnLongClickListener() "
                         , onLongClickName(id), View.class)
@@ -91,9 +85,7 @@ public class TypeElementContext {
             } else if (annoClass == OnTouch.class) {
                 int id = element.getAnnotation(OnTouch.class).value();
                 checker.check(id, OnTouch.class, element);
-//                ctorBuilder.addStatement("$T $L = target.findViewById($L)"
-//                        , View.class, onTouchName(id), id);
-                ctorBuilder.addStatement("$T $L = $T.findViewAsType(contentView, $L, $T.class)"
+                ctorBuilder.addStatement("$T $L = $T.findViewAsType(source, $L, $T.class)"
                         , View.class, onTouchName(id), FINDER_CLASS_NAME, id, View.class);
                 ctorBuilder.beginControlFlow("$L.setOnTouchListener(new $T.OnTouchListener() "
                         , onTouchName(id), View.class)

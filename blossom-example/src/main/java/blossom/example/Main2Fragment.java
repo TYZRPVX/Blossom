@@ -14,14 +14,16 @@ import blossom.core.Blossom;
 
 public class Main2Fragment extends Fragment {
 
-//    @TieView(R.id.fragment_main2_textview)
+    @TieView(R.id.fragment_main2_textview)
     TextView fragment_main2_textview;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main2, container, false);
-//        Blossom.tie(this, view);
+        Blossom.tie(this, view);
+
+        fragment_main2_textview.setText("fragment_main2_textview OK.");
         return view;
     }
 }

@@ -61,6 +61,7 @@ public class BlossomProcessor extends AbstractProcessor {
         ALL_ANNOTATIONS.addAll(LISTENER_ANNOTATIONS);
     }
 
+    ClassName FINDER_CLASS_NAME = ClassName.get("blossom.core", "Finder");
     private Filer filer;
 
     private static String handlerClassName(String targetName) {
@@ -116,9 +117,10 @@ public class BlossomProcessor extends AbstractProcessor {
             MethodSpec.Builder ctorBuilder = MethodSpec.constructorBuilder()
                     .addModifiers(Modifier.PUBLIC)
                     .addParameter(typeVariableName, "target", Modifier.FINAL)
-                    .addParameter(Resources.class, "res");
+                    .addParameter(View.class, "source");
 
-            ctorBuilder.addStatement("$T contentView = target.findViewById(android.R.id.content)", View.class);
+            ctorBuilder.addStatement("$T res = $T.getResources(target)", Resources.class, FINDER_CLASS_NAME);
+//            ctorBuilder.addStatement("$T contentView = $T.findContentView(target)", View.class, FINDER_CLASS_NAME);
             typeElementContext.addStatementsTo(ctorBuilder);
 
             String targetClassName = typeElement.getSimpleName().toString();

@@ -68,6 +68,4 @@ public class RedundantTieChecker {
             return hash;
         }
     }
-
-
 }

@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
         textView.setText(appName1);
         textView.setTextColor(colorPrimaryDark);
         Button button = (Button) findViewById(R.id.button);
-        CheckBox checkBox = (CheckBox) findViewById(R.id.main_checkbox);
         button.setText(buttonName);
         blueCircleView.setImageDrawable(blueCircleDrawable);
     }
@@ -72,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
 //    void startActivity1(View v) {
 //        startActivity(new Intent(MainActivity.this, Main2Activity.class));
 //    }
-
 
     @OnLongClick(R.id.button)
     boolean showToast(View v) {

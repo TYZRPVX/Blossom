@@ -22,6 +22,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+    <CheckBox android:id="@+id/main_checkbox"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/blue_circle"/>
+
     <Button
             android:id="@+id/button"
             android:layout_width="wrap_content"

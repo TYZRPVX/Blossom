@@ -4,6 +4,7 @@ package blossom.compiler;
 import android.content.res.Resources;
 import android.view.View;
 
+import blossom.annotations.*;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -30,14 +31,6 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 
-import blossom.annotations.OnClick;
-import blossom.annotations.OnLongClick;
-import blossom.annotations.OnTouch;
-import blossom.annotations.TieColor;
-import blossom.annotations.TieDrawable;
-import blossom.annotations.TieString;
-import blossom.annotations.TieView;
-
 @AutoService(Processor.class)
 public class BlossomProcessor extends AbstractProcessor {
 
@@ -50,7 +43,8 @@ public class BlossomProcessor extends AbstractProcessor {
     public final static List<Class<? extends Annotation>> LISTENER_ANNOTATIONS = Arrays.asList(
             OnClick.class,
             OnLongClick.class,
-            OnTouch.class
+            OnTouch.class,
+            OnCheckedChanged.class
     );
 
     public static List<Class<? extends Annotation>> ALL_ANNOTATIONS = new ArrayList<>();

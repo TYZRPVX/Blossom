@@ -4,6 +4,8 @@ package blossom.compiler;
 import android.view.MotionEvent;
 import android.view.View;
 
+import android.widget.CompoundButton;
+import blossom.annotations.*;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 
@@ -12,14 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.lang.model.element.Element;
-
-import blossom.annotations.OnClick;
-import blossom.annotations.OnLongClick;
-import blossom.annotations.OnTouch;
-import blossom.annotations.TieColor;
-import blossom.annotations.TieDrawable;
-import blossom.annotations.TieString;
-import blossom.annotations.TieView;
 
 /**
  * Store all annotation context in a class
@@ -94,12 +88,28 @@ public class TypeElementContext {
                         .endControlFlow()
                         .endControlFlow()
                         .addStatement(")");
+            } else if (annoClass == OnCheckedChanged.class) {
+                int id = element.getAnnotation(OnCheckedChanged.class).value();
+                checker.check(id, OnCheckedChanged.class, element);
+                ctorBuilder.addStatement("$T $L = $T.findViewAsType(source, $L, $T.class)"
+                        , CompoundButton.class, onCheckedChangedName(id), FINDER_CLASS_NAME, id, CompoundButton.class);
+                ctorBuilder.beginControlFlow("$L.setOnCheckedChangeListener(new $T.OnCheckedChangeListener() "
+                        , onCheckedChangedName(id), CompoundButton.class)
+                        .beginControlFlow("@Override public void onCheckedChanged($T buttonView, boolean isChecked) ", CompoundButton.class)
+                        .addStatement("target.$L(buttonView, isChecked)", element.getSimpleName())
+                        .endControlFlow()
+                        .endControlFlow()
+                        .addStatement(")");
             }
         }
     }
 
     private String onTouchName(int id) {
         return "onTouch" + id;
+    }
+
+    private String onCheckedChangedName(int id) {
+        return "onCheckedChanged" + id;
     }
 
     private String onClickName(int id) {

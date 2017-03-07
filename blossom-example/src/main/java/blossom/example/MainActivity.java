@@ -7,18 +7,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
-import blossom.annotations.OnClick;
-import blossom.annotations.OnLongClick;
-import blossom.annotations.OnTouch;
-import blossom.annotations.TieColor;
-import blossom.annotations.TieDrawable;
-import blossom.annotations.TieString;
-import blossom.annotations.TieView;
+import blossom.annotations.*;
 import blossom.core.Blossom;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
     @TieView(R.id.blue_circle)
     ImageView blueCircleView;
 
+    @TieView(R.id.main_checkbox)
+    CheckBox main_checkbox;
+
     @TieColor(R.color.colorPrimaryDark)
     int colorPrimaryDark;
 
@@ -50,8 +44,14 @@ public class MainActivity extends AppCompatActivity {
         textView.setText(appName1);
         textView.setTextColor(colorPrimaryDark);
         Button button = (Button) findViewById(R.id.button);
+        CheckBox checkBox = (CheckBox) findViewById(R.id.main_checkbox);
         button.setText(buttonName);
         blueCircleView.setImageDrawable(blueCircleDrawable);
+    }
+
+    @OnCheckedChanged(R.id.main_checkbox)
+    void doOnCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        Toast.makeText(this, "isChecked: " + isChecked, Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.button)
@@ -61,7 +61,9 @@ public class MainActivity extends AppCompatActivity {
 
     @OnTouch(R.id.button)
     boolean doOnTouch(View v, MotionEvent event) {
-        Toast.makeText(this, "doOnTouch", Toast.LENGTH_SHORT).show();
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            Toast.makeText(this, "doOnTouch MotionEvent.ACTION_DOWN", Toast.LENGTH_SHORT).show();
+        }
         return false;
     }
 

@@ -1,12 +1,6 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'com.jfrog.bintray'
-
-version = "0.0.1"
 
 android {
-
-    resourcePrefix "x_"
 
     compileSdkVersion 23
     buildToolsVersion "25.0.2"
@@ -37,3 +31,5 @@ dependencies {
     testCompile deps.junit
     compile deps.logUtils
 }
+
+apply from: "https://raw.githubusercontent.com/xiaopansky/android-library-publish-to-jcenter/master/bintrayUpload.gradle"
